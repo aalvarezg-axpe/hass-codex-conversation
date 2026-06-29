@@ -502,9 +502,9 @@ async def test_async_run_chat_log_appends_attachment_items(tmp_path):
     await async_run_chat_log(
         chat_log=chat_log,
         client=_Client(),
-        model="gpt-5.5",
+        model="gpt-5.3-codex-spark",
         entity_id="conversation.codex",
-        reasoning_effort="medium",
+        reasoning_effort="low",
         reasoning_summary="auto",
         text_verbosity="medium",
     )

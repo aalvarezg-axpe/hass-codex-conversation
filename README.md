@@ -60,7 +60,8 @@ After setup, you can change options from **Settings -> Devices & Services -> Ope
 
 | Option | Description | Default |
 | --- | --- | --- |
-| Model | Codex model used for the conversation agent | `gpt-5.5` |
+| Model | Codex model used for the conversation agent | `gpt-5.3-codex-spark` |
+| Reasoning effort | Amount of reasoning tokens generated before responding | `low` |
 
 ## Security Notes
 
@@ -78,10 +79,10 @@ After setup, you can change options from **Settings -> Devices & Services -> Ope
 
 | Model | Notes |
 | --- | --- |
-| `gpt-5.5` | Recommended default for Codex |
+| `gpt-5.5` | Recommended by OpenAI for Codex |
 | `gpt-5.4` | Current Codex model |
 | `gpt-5.4-mini` | Faster and lighter Codex model |
-| `gpt-5.3-codex-spark` | Lower-latency Pro Codex model |
+| `gpt-5.3-codex-spark` | Default lower-latency Pro Codex model |
 
 The model selector also accepts custom values. This keeps the integration usable
 when OpenAI releases a new Codex model before the repository has been updated.
