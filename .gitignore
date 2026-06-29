@@ -6,6 +6,14 @@ venv
 .venv
 .local/
 
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+secrets.yaml
+
 coverage_re/
 pytest-coverage.txt
 pytest.xml
@@ -19,5 +27,11 @@ htmlcov/
 custom_components/hacs
 config/*
 !config/configuration.yaml
+config/.storage/
+config/secrets.yaml
+config/*.db*
+
+.codex/
+auth.json
 
 node_modules/

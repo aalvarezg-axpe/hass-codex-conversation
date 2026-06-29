@@ -56,6 +56,7 @@ from .const import (
     RECOMMENDED_TEXT_VERBOSITY,
 )
 from .oauth import CodexHAAuth
+from .security import redact_sensitive_text
 from .transform import (
     async_prepare_files_for_prompt,
     build_input_items,
@@ -250,14 +251,15 @@ async def async_run_chat_log(
             CodexRateLimited,
             CodexServerOverloaded,
         ) as err:
-            _LOGGER.error("Codex error: %s", err)
+            safe_error = redact_sensitive_text(err)
+            _LOGGER.error("Codex request failed: %s", safe_error)
             if error_cls is ConverseError:
                 raise ConverseError(
-                    str(err),
+                    safe_error,
                     chat_log.conversation_id or "",
                     intent.IntentResponse(language="en"),
                 ) from err
-            raise error_cls(str(err)) from err
+            raise error_cls(safe_error) from err
 
         if not chat_log.unresponded_tool_results:
             break
@@ -305,4 +307,4 @@ async def _events_to_deltas(
             }
 
         elif isinstance(event, ReasoningSummaryDelta):
-            _LOGGER.debug("codex reasoning: %.80s", event.delta)
+            continue

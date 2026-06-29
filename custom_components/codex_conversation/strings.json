@@ -53,6 +53,7 @@
             "text_verbosity": "Text verbosity"
           },
           "data_description": {
+            "model": "Choose a recommended Codex model or enter a custom model ID.",
             "reasoning_effort": "How many reasoning tokens the model should generate before responding.",
             "reasoning_summary": "Controls the length and detail of the reasoning summary.",
             "text_verbosity": "Controls the verbosity of the model's text output."
@@ -85,6 +86,7 @@
             "text_verbosity": "[%key:component::codex_conversation::config_subentries::conversation::step::advanced::data::text_verbosity%]"
           },
           "data_description": {
+            "model": "[%key:component::codex_conversation::config_subentries::conversation::step::advanced::data_description::model%]",
             "reasoning_effort": "[%key:component::codex_conversation::config_subentries::conversation::step::advanced::data_description::reasoning_effort%]",
             "reasoning_summary": "[%key:component::codex_conversation::config_subentries::conversation::step::advanced::data_description::reasoning_summary%]",
             "text_verbosity": "[%key:component::codex_conversation::config_subentries::conversation::step::advanced::data_description::text_verbosity%]"

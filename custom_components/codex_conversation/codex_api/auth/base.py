@@ -54,9 +54,9 @@ class AbstractAuth(ABC):
         account_id = await self.async_get_account_id()
 
         headers = {
+            **extra_headers,
             **_CODEX_FIXED_HEADERS,
             "Authorization": f"Bearer {access_token}",
-            **extra_headers,
         }
         if account_id:
             headers["openai-organization"] = account_id

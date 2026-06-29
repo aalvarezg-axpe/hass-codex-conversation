@@ -16,10 +16,12 @@ echo "Setting up Git configuration..."
 # Check if we're in Codespaces (GitHub automatically configures Git)
 if [ -n "$CODESPACES" ]; then
     echo "✓ Running in GitHub Codespaces - Git already configured by GitHub"
-    USER_NAME=$(git config --global user.name 2>/dev/null || echo "Not set")
-    USER_EMAIL=$(git config --global user.email 2>/dev/null || echo "Not set")
-    echo "  user.name: $USER_NAME"
-    echo "  user.email: $USER_EMAIL"
+    if git config --global user.name >/dev/null 2>&1 && \
+       git config --global user.email >/dev/null 2>&1; then
+        echo "  Git user identity is configured"
+    else
+        echo "  Git user identity is not fully configured"
+    fi
 
     # Set safe defaults for Codespaces
     git config --global init.defaultBranch main
@@ -49,9 +51,9 @@ if [ -n "$USER_NAME" ]; then
     CURRENT_NAME=$(git config --global user.name 2>/dev/null || echo "")
     if [ "$CURRENT_NAME" != "$USER_NAME" ]; then
         git config --global user.name "$USER_NAME"
-        echo "✓ Set user.name: $USER_NAME"
+        echo "✓ Set user.name from host gitconfig"
     else
-        echo "  user.name already set: $USER_NAME"
+        echo "  user.name already configured"
     fi
 fi
 
@@ -59,9 +61,9 @@ if [ -n "$USER_EMAIL" ]; then
     CURRENT_EMAIL=$(git config --global user.email 2>/dev/null || echo "")
     if [ "$CURRENT_EMAIL" != "$USER_EMAIL" ]; then
         git config --global user.email "$USER_EMAIL"
-        echo "✓ Set user.email: $USER_EMAIL"
+        echo "✓ Set user.email from host gitconfig"
     else
-        echo "  user.email already set: $USER_EMAIL"
+        echo "  user.email already configured"
     fi
 fi
 
@@ -121,7 +123,7 @@ fi
 # Keep the signing key info for reference, but don't use it
 SIGNING_KEY=$(grep 'signingkey' "$HOME/.gitconfig.host" 2>/dev/null | sed 's/.*= //' | xargs || echo "")
 if [ -n "$SIGNING_KEY" ]; then
-    echo "  → Your signing key: ${SIGNING_KEY:0:20}... (available on host)"
+    echo "  → A signing key is configured on the host but is not used in the container"
 fi
 
 echo "✓ Git configuration complete"

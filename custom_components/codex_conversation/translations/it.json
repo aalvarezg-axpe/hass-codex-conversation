@@ -53,6 +53,7 @@
             "text_verbosity": "Verbosità del testo"
           },
           "data_description": {
+            "model": "Scegli un modello Codex consigliato o inserisci un ID modello personalizzato.",
             "reasoning_effort": "Quanti token di ragionamento il modello deve generare prima di rispondere.",
             "reasoning_summary": "Controlla la lunghezza e il dettaglio del riepilogo del ragionamento.",
             "text_verbosity": "Controlla la verbosità dell'output testuale del modello."
@@ -85,6 +86,7 @@
             "text_verbosity": "Verbosità del testo"
           },
           "data_description": {
+            "model": "Scegli un modello Codex consigliato o inserisci un ID modello personalizzato.",
             "reasoning_effort": "Quanti token di ragionamento il modello deve generare prima di rispondere.",
             "reasoning_summary": "Controlla la lunghezza e il dettaglio del riepilogo del ragionamento.",
             "text_verbosity": "Controlla la verbosità dell'output testuale del modello."

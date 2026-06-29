@@ -7,11 +7,12 @@
 
 # https://www.home-assistant.io/integrations/homeassistant/
 homeassistant:
-  debug: true
+  debug: false
 
 # Debugging integration
 # https://www.home-assistant.io/integrations/debugpy/
-debugpy:
+# Enable manually only when actively debugging on a trusted local machine.
+# debugpy:
 
 # Privacy & analytics settings
 # https://www.home-assistant.io/integrations/analytics/
@@ -30,19 +31,8 @@ system_health:
 
 # Core integrations
 http:
-  # Development server settings for Codespaces/DevContainer
-  server_host: "0.0.0.0"
-  # Allow access from Codespaces reverse proxy
-  use_x_forwarded_for: true
-  trusted_proxies:
-    - 127.0.0.0/8
-    - ::1
-    - 192.168.0.0/16
-    - 172.16.0.0/12
-    - 10.0.0.0/8
-  # CORS for development
-  cors_allowed_origins:
-    - "*"
+  # Keep the development server local by default.
+  server_host: "127.0.0.1"
 
 # Config UI integration - useful for development
 config:
@@ -155,5 +145,5 @@ logger:
     # Config flow debugging (setup, options)
     homeassistant.config_entries: info
 
-    # Your integration debug logging - shows EVERYTHING from your integration
-    custom_components.codex_conversation: debug
+    # Avoid logging conversation content, tokens, or model responses by default.
+    custom_components.codex_conversation: warning

@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import logging
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 from homeassistant.components import ai_task as ai_task_component
 from homeassistant.components.conversation import AssistantContent
+from homeassistant.exceptions import HomeAssistantError
 import pytest
 import voluptuous as vol
 
@@ -85,6 +87,38 @@ async def test_generate_data_parses_json_result(mock_ai_task_entity):
 
     assert result.conversation_id == "conv-2"
     assert result.data == {"answer": "ok"}
+
+
+async def test_generate_data_json_parse_error_does_not_log_response(
+    mock_ai_task_entity, caplog
+):
+    """Invalid structured output must not expose model text in logs."""
+    sensitive_response = "not-json SECRET_HOME_ADDRESS=private"
+    chat_log = make_chat_log(
+        [
+            AssistantContent(
+                agent_id="ai_task.codex",
+                content=sensitive_response,
+                tool_calls=None,
+            )
+        ]
+    )
+    task = MagicMock(spec=ai_task_component.GenDataTask)
+    task.structure = vol.Schema({vol.Required("answer"): str})
+    task.name = "extract"
+
+    async def fake_stream(request):
+        yield OutputTextDelta(delta=sensitive_response, content_index=0)
+
+    with (
+        caplog.at_level(logging.ERROR),
+        patch("custom_components.codex_conversation.ai_task.CodexClient") as MockClient,
+    ):
+        MockClient.return_value.stream = fake_stream
+        with pytest.raises(HomeAssistantError):
+            await mock_ai_task_entity._async_generate_data(task, chat_log)
+
+    assert sensitive_response not in caplog.text
 
 
 def test_format_structure_instruction():

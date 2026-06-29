@@ -14,6 +14,7 @@ from typing import Any, AsyncIterator
 
 import aiohttp
 
+from ..security import redact_sensitive_text
 from .errors import (
     CodexApiError,
     CodexContextWindowExceeded,
@@ -47,17 +48,18 @@ _LOGGER = logging.getLogger(__name__)
 def _classify_error(code: str, message: str) -> CodexError:
     """Map an API error code string to the correct exception subclass."""
     lc = code.lower()
+    safe_message = redact_sensitive_text(message)
     if "context_length_exceeded" in lc or "context_window" in lc:
-        return CodexContextWindowExceeded(message)
+        return CodexContextWindowExceeded(safe_message)
     if "quota" in lc or "insufficient_quota" in lc:
-        return CodexQuotaExceeded(message)
+        return CodexQuotaExceeded(safe_message)
     if "usage_not_included" in lc:
-        return CodexUsageNotIncluded(message)
+        return CodexUsageNotIncluded(safe_message)
     if "rate_limit" in lc:
-        return CodexRateLimited(message)
+        return CodexRateLimited(safe_message)
     if "server_error" in lc or "overloaded" in lc:
-        return CodexServerOverloaded(message)
-    return CodexApiError(0, f"{code}: {message}")
+        return CodexServerOverloaded(safe_message)
+    return CodexApiError(0, f"{code}: {safe_message}")
 
 
 # ── Event parsing ──────────────────────────────────────────────────────────────
@@ -77,7 +79,7 @@ def parse_event(data_str: str) -> ResponseEvent | None:
     try:
         evt: dict[str, Any] = json.loads(data_str)
     except json.JSONDecodeError:
-        _LOGGER.debug("codex_api.sse: unparseable data payload: %.120s", data_str)
+        _LOGGER.debug("codex_api.sse: unparseable data payload")
         return None
 
     etype: str = evt.get("type", "")

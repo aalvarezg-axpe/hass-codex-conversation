@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from typing import AsyncIterator
 
+from ..security import redact_sensitive_text
 from .auth import AbstractAuth
 from .errors import CodexApiError, CodexRateLimited, CodexServerOverloaded
 from .models import ResponseEvent
@@ -23,6 +24,13 @@ _STREAM_HEADERS = {
     "Content-Type": "application/json",
     "Accept": "text/event-stream",
 }
+
+
+async def _redacted_response_text(resp) -> str:
+    """Return a safe API error message without exposing the response body."""
+    await resp.text()
+    reason = redact_sensitive_text(resp.reason or "request failed")
+    return f"Codex API returned HTTP {resp.status}: {reason}"
 
 
 class CodexClient:
@@ -72,11 +80,13 @@ class CodexClient:
                 ra = resp.headers.get("Retry-After")
                 if ra and ra.isdigit():
                     retry_after = float(ra)
-                raise CodexRateLimited(await resp.text(), retry_after=retry_after)
+                raise CodexRateLimited(
+                    await _redacted_response_text(resp), retry_after=retry_after
+                )
             if resp.status == 503:
-                raise CodexServerOverloaded(await resp.text())
+                raise CodexServerOverloaded(await _redacted_response_text(resp))
             if resp.status >= 400:
-                raise CodexApiError(resp.status, await resp.text())
+                raise CodexApiError(resp.status, await _redacted_response_text(resp))
 
             async for event in sse_iter(resp):
                 yield event

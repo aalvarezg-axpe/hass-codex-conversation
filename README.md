@@ -4,7 +4,7 @@ A [Home Assistant](https://www.home-assistant.io/) custom integration that bring
 
 ## The Idea
 
-OpenAI's **Codex CLI** is a developer tool that lets you use powerful reasoning models such as `gpt-5.1-codex` and `gpt-5.3-codex` directly from the terminal.
+OpenAI's **Codex CLI** is a developer tool that lets you use powerful reasoning models such as `gpt-5.5` and `gpt-5.4` directly from the terminal.
 Access to these models is included in a ChatGPT Plus or Pro subscription, so there is no separate OpenAI API key and no per-token billing on top of that subscription.
 
 This integration reuses the same authenticated Codex backend flow and exposes it as a native Home Assistant conversation agent.
@@ -13,7 +13,7 @@ This integration reuses the same authenticated Codex backend flow and exposes it
 
 - No API key required, authentication happens with your existing ChatGPT account through OAuth2 device flow.
 - Streaming responses, so text appears progressively in the Home Assistant conversation UI.
-- Support for the `gpt-5.*-codex` model family.
+- Support for current Codex models, with a custom model field for newly released model IDs.
 - Multi-turn conversations with full chat history.
 - Home Assistant Assist integration.
 - Automatic token refresh.
@@ -60,16 +60,31 @@ After setup, you can change options from **Settings -> Devices & Services -> Ope
 
 | Option | Description | Default |
 | --- | --- | --- |
-| Model | Codex model used for the conversation agent | `gpt-5.1-codex` |
+| Model | Codex model used for the conversation agent | `gpt-5.5` |
 
-### Available Models
+## Security Notes
+
+- OAuth access and refresh tokens are stored by Home Assistant in the normal
+  config entry storage. Do not commit or publish your Home Assistant
+  `.storage` directory, `secrets.yaml`, logs, or backups.
+- The development configuration is intentionally local-only by default. Only
+  expose Home Assistant, debug ports, reverse proxies, or broad CORS settings on
+  trusted networks.
+- Attachments sent to Codex are uploaded to an external OpenAI endpoint. Review
+  files before attaching them and avoid sending documents that contain private
+  credentials or unrelated personal data.
+
+### Recommended Models
 
 | Model | Notes |
 | --- | --- |
-| `gpt-5.1-codex` | Balanced speed and reasoning |
-| `gpt-5.2-codex` | More capable reasoning |
-| `gpt-5.3-codex` | Most capable |
-| `gpt-5.1-codex-mini` | Faster and lighter |
+| `gpt-5.5` | Recommended default for Codex |
+| `gpt-5.4` | Current Codex model |
+| `gpt-5.4-mini` | Faster and lighter Codex model |
+| `gpt-5.3-codex-spark` | Lower-latency Pro Codex model |
+
+The model selector also accepts custom values. This keeps the integration usable
+when OpenAI releases a new Codex model before the repository has been updated.
 
 ## How It Works
 

@@ -129,7 +129,7 @@ class CodexAITaskEntity(ai_task.AITaskEntity):
         try:
             data = json_loads(text)
         except JSONDecodeError as err:
-            _LOGGER.error("Failed to parse JSON response: %s. Response: %s", err, text)
+            _LOGGER.error("Failed to parse Codex structured response JSON: %s", err)
             raise HomeAssistantError("Error with Codex structured response") from err
 
         return ai_task.GenDataTaskResult(

@@ -334,7 +334,7 @@ async def test_handle_message_uses_model_from_options(hass, mock_oauth_session):
         subentry_id="conversation_subentry_id",
         title="Codex Conversation",
         subentry_type="conversation",
-        data={CONF_MODEL: "gpt-5.3-codex"},
+        data={CONF_MODEL: "gpt-5.6-codex-next"},
     )
     entity = CodexConversationEntity(hass, entry, mock_oauth_session, subentry)
     entity.entity_id = "conversation.test"
@@ -365,7 +365,7 @@ async def test_handle_message_uses_model_from_options(hass, mock_oauth_session):
         await entity._async_handle_message(user_input, chat_log)
 
     assert len(captured) == 1
-    assert captured[0].model == "gpt-5.3-codex"
+    assert captured[0].model == "gpt-5.6-codex-next"
 
 
 @pytest.mark.parametrize(
@@ -475,7 +475,7 @@ async def test_handle_message_provide_llm_data_error(mock_entity):
 async def test_async_run_chat_log_appends_attachment_items(tmp_path):
     """The last user message must include attachment items in the request input."""
     image_path = tmp_path / "sample.png"
-    image_path.write_bytes(b"fake-png-data")
+    image_path.write_bytes(b"\x89PNG\r\n\x1a\nfake-png-data")
 
     chat_log = make_chat_log(
         [
@@ -502,7 +502,7 @@ async def test_async_run_chat_log_appends_attachment_items(tmp_path):
     await async_run_chat_log(
         chat_log=chat_log,
         client=_Client(),
-        model="gpt-5.1-codex",
+        model="gpt-5.5",
         entity_id="conversation.codex",
         reasoning_effort="medium",
         reasoning_summary="auto",

@@ -46,6 +46,14 @@ from .const import (
 _LOGGER = logging.getLogger(__name__)
 
 
+def _model_options(current_model: str | None = None) -> list[str]:
+    """Return recommended model options plus any currently configured value."""
+    options = list(MODELS)
+    if current_model and current_model not in options:
+        options.append(current_model)
+    return options
+
+
 class CodexConversationConfigFlow(ConfigFlow, domain=DOMAIN):
     """Config flow: request device code, show URL + code, wait for approval."""
 
@@ -249,7 +257,12 @@ class _BaseCodexSubentryFlow(ConfigSubentryFlow):
                     vol.Required(
                         CONF_MODEL,
                         default=options.get(CONF_MODEL, DEFAULT_MODEL),
-                    ): SelectSelector(SelectSelectorConfig(options=list(MODELS))),
+                    ): SelectSelector(
+                        SelectSelectorConfig(
+                            options=_model_options(options.get(CONF_MODEL)),
+                            custom_value=True,
+                        )
+                    ),
                     vol.Required(
                         CONF_REASONING_EFFORT,
                         default=options.get(
